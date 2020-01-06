@@ -1,2 +1,2 @@
-# Face Detection NN+SSD Build using GAPFlow
+# Face Detection NN + SSD Build using GAPFlow
 
