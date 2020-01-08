@@ -202,16 +202,16 @@ void GenerateAnchorsLayer(){
 
 	Alps * anchors_layer_1 = NULL;
  	anchors_layer_1 = malloc(sizeof(Alps));
-	float n_aspect_ratios_1[]= {1./3., 1./2., 1., 2., 3.};
- 	float n_variances_1[]={0.1, 0.1, 0.1, 0.1};
+	float n_aspect_ratios_1[]= {1./2., 1., 2.};
+ 	float n_variances_1[]={0.1, 0.1, 0.2, 0.2};
 
 	anchors_layer_1->feature_map_width  = 80;
     anchors_layer_1->feature_map_height = 60;
     anchors_layer_1->n_classes  = 2;
     anchors_layer_1->img_width  = 160;
     anchors_layer_1->img_height = 120;
-    anchors_layer_1->this_scale = 0.1;
-    anchors_layer_1->next_scale = 0.3;
+    anchors_layer_1->this_scale = 0.05;
+    anchors_layer_1->next_scale = 0.15;
     anchors_layer_1->anchor_params = 4;
     anchors_layer_1->iou_thr = 0.1;
     anchors_layer_1->step_height= NAN;        // Automatic assignment
@@ -237,16 +237,16 @@ void GenerateAnchorsLayer(){
 
 	Alps * anchors_layer_2 = NULL;
  	anchors_layer_2 = malloc(sizeof(Alps));
-	float n_aspect_ratios_2[]= {1./4., 1./3., 1./2., 1., 2., 3.};
- 	float n_variances_2[]={0.1, 0.1, 0.1, 0.1};
+	float n_aspect_ratios_2[]= {1./2., 1., 2.};
+ 	float n_variances_2[]={0.1, 0.1, 0.2, 0.2};
 
 	anchors_layer_2->feature_map_width  = 40;
     anchors_layer_2->feature_map_height = 30;
     anchors_layer_2->n_classes  = 2;
     anchors_layer_2->img_width  = 160;
     anchors_layer_2->img_height = 120;
-    anchors_layer_2->this_scale = 0.3;
-    anchors_layer_2->next_scale = 0.5;
+    anchors_layer_2->this_scale = 0.15;
+    anchors_layer_2->next_scale = 0.35;
     anchors_layer_2->anchor_params = 4;
     anchors_layer_2->iou_thr = 0.1;
     anchors_layer_2->step_height= NAN;        // Automatic assignment
@@ -273,15 +273,15 @@ void GenerateAnchorsLayer(){
 
 	Alps * anchors_layer_3 = NULL;
  	anchors_layer_3 = malloc(sizeof(Alps));
-	float n_aspect_ratios_3[]= {1./5., 1./4., 1./3., 1./2., 1., 2., 3.};
- 	float n_variances_3[]={0.1, 0.1, 0.1, 0.1};
+	float n_aspect_ratios_3[]= {1./2., 1., 2.};
+ 	float n_variances_3[]={0.1, 0.1, 0.2, 0.2};
 
 	anchors_layer_3->feature_map_width  = 20;
     anchors_layer_3->feature_map_height = 15;
     anchors_layer_3->n_classes  = 2;
     anchors_layer_3->img_width  = 160;
     anchors_layer_3->img_height = 120;
-    anchors_layer_3->this_scale = 0.5;
+    anchors_layer_3->this_scale = 0.35;
     anchors_layer_3->next_scale = 0.7;
     anchors_layer_3->anchor_params = 4;
     anchors_layer_3->iou_thr = 0.1;
@@ -300,45 +300,7 @@ void GenerateAnchorsLayer(){
  	anchors_layer_3->n_variances     =	sizeof(n_variances_3)/sizeof(n_variances_3[0]);
  	Anchor_layer_init(anchors_layer_3);             // initialize the layer with the information provided
 
-	Generate_anchor_layer_output(source_file,header_file, anchors_layer_3, 3);
-
-
-	///////////////////////
-	// anchors_layer_4
-	//////////////////////
-
-	Alps * anchors_layer_4 = NULL;
- 	anchors_layer_4 = malloc(sizeof(Alps));
-	float n_aspect_ratios_4[]= {1./4., 1./3., 1./2., 1., 2., 3.};
- 	float n_variances_4[]={0.1, 0.1, 0.1, 0.1};
-
-	anchors_layer_4->feature_map_width  = 10;
-    anchors_layer_4->feature_map_height = 7;
-    anchors_layer_4->n_classes  = 2;
-    anchors_layer_4->img_width  = 160;
-    anchors_layer_4->img_height = 120;
-    anchors_layer_4->this_scale = 0.7;
-    anchors_layer_4->next_scale = 0.9;
-    anchors_layer_4->anchor_params = 4;
-    anchors_layer_4->iou_thr = 0.1;
-    anchors_layer_4->step_height= NAN;        // Automatic assignment
- 	anchors_layer_4->step_width = NAN;        // Automatic assignment
- 	anchors_layer_4->offset_height = NAN;     // Automatic assignment
- 	anchors_layer_4->offset_width  = NAN;     // Automatic assignment
- 	anchors_layer_4->aspect_ratios = n_aspect_ratios_4;
- 	anchors_layer_4->variances = n_variances_4;
- 	anchors_layer_4->two_boxes_for_ar1 = true;
- 	anchors_layer_4->max_bboxes = 20; //Is this used?
- 	anchors_layer_4->n_confidence = 0;
- 	anchors_layer_4->confidence_thr = CONFIDENCE_THR;           // it can be changed, more specifically after performance analysis.
- 	anchors_layer_4->max_candidates_per_class = 20;  // it can be changed, more specifically after performance analysis and also for power consumption.
- 	anchors_layer_4->n_aspect_ratios =	sizeof(n_aspect_ratios_4)/sizeof(n_aspect_ratios_4[0]);
- 	anchors_layer_4->n_variances     =	sizeof(n_variances_4)/sizeof(n_variances_4[0]);
- 	Anchor_layer_init(anchors_layer_4);             // initialize the layer with the information provided
-
-	Generate_anchor_layer_output(source_file,header_file, anchors_layer_4, 4);
-
- 	
+	Generate_anchor_layer_output(source_file,header_file, anchors_layer_3, 3); 	
 
 	fclose(source_file);
 	fclose(header_file);

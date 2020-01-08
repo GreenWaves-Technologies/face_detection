@@ -45,7 +45,7 @@ static pi_buffer_t buffer;
 struct pi_device HyperRam;
 static struct pi_hyperram_conf conf;
 
-AT_HYPERFLASH_FS_EXT_ADDR_TYPE body_detection_L3_Flash = 0;
+AT_HYPERFLASH_FS_EXT_ADDR_TYPE face_detection_L3_Flash = 0;
 
 #ifdef __EMUL__
 #include <sys/types.h>
@@ -64,9 +64,6 @@ AT_HYPERFLASH_FS_EXT_ADDR_TYPE body_detection_L3_Flash = 0;
 
 #define FIX2FP(Val, Precision)    ((float) (Val) / (float) (1<<(Precision)))
 
-//static short int *L2_Output_1, L2_Output_2, L2_Output_3, L2_Output_4, L2_Output_5, L2_Output_6, L2_Output_7, L2_Output_8;
-//PI_L2 short int *L2_Output_1, *L2_Output_2, *L2_Output_3, *L2_Output_4, *L2_Output_5, *L2_Output_6, *L2_Output_7, *L2_Output_8;
-
 
 PI_L2 short int *tmp_buffer_classes, *tmp_buffer_boxes;
 
@@ -77,7 +74,6 @@ L2_MEM MNIST_IMAGE_IN_T *ImageIn;
 extern PI_L2 Alps * anchor_layer_1;
 extern PI_L2 Alps * anchor_layer_2;
 extern PI_L2 Alps * anchor_layer_3;
-extern PI_L2 Alps * anchor_layer_4;
 
 
 short int * Output_1; 
@@ -86,8 +82,6 @@ short int * Output_3;
 short int * Output_4; 
 short int * Output_5; 
 short int * Output_6; 
-short int * Output_7; 
-short int * Output_8;
 
 #ifdef __EMUL__
 PI_L2 bboxs_fp_t bbxs;
@@ -109,11 +103,9 @@ static int initSSD(){
 
     bbxs.num_bb = 0;
 
-
     initAnchorLayer_1();
     initAnchorLayer_2();
     initAnchorLayer_3();
-    initAnchorLayer_4();
 
     return 0;
 
@@ -234,7 +226,7 @@ static void RunNN()
     gap_cl_resethwtimer();
     ti = gap_cl_readhwtimer();
 
-    body_detectionCNN(ImageIn, Output_1, Output_2, Output_3, Output_4, Output_5, Output_6, Output_7, Output_8);
+    face_detectionCNN(ImageIn, Output_1, Output_2, Output_3, Output_4, Output_5, Output_6);
 
 
 #if 0
@@ -288,20 +280,16 @@ static void RunSSD()
     //TODO Quantization is likely wrong need to check output
 
     SDD3Dto2DSoftmax_80_60_12(Output_1,tmp_buffer_classes,13,2);
-    SDD3Dto2D_80_60_24(Output_5,tmp_buffer_boxes,0,0);
-    Predecoder80_60(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_1, &bbxs,10);
+    SDD3Dto2D_80_60_24(Output_4,tmp_buffer_boxes,0,0);
+    Predecoder80_60(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_1, &bbxs,11);
 
-    SDD3Dto2DSoftmax_40_30_14(Output_2,tmp_buffer_classes,11,2);
-    SDD3Dto2D_40_30_28(Output_6,tmp_buffer_boxes,0,0);
-    Predecoder40_30(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_2, &bbxs,11);
+    SDD3Dto2DSoftmax_40_30_14(Output_2,tmp_buffer_classes,14,2);
+    SDD3Dto2D_40_30_28(Output_5,tmp_buffer_boxes,0,0);
+    Predecoder40_30(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_2, &bbxs,12);
     
-    SDD3Dto2DSoftmax_20_15_16(Output_3,tmp_buffer_classes,12,2);
-    SDD3Dto2D_20_15_32(Output_7,tmp_buffer_boxes,0,0);
-    Predecoder20_15(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_3,&bbxs,11);
-    
-    SDD3Dto2DSoftmax_10_7_14(Output_4,tmp_buffer_classes,13,2);
-    SDD3Dto2D_10_7_28(Output_8,tmp_buffer_boxes,0,0);
-    Predecoder10_7(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_4, &bbxs,11);
+    SDD3Dto2DSoftmax_20_15_16(Output_3,tmp_buffer_classes,13,2);
+    SDD3Dto2D_20_15_32(Output_6,tmp_buffer_boxes,0,0);
+    Predecoder20_15(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_3,&bbxs,12);
 
 
     bbox_t temp;
@@ -389,19 +377,14 @@ int checkResults(bboxs_t *boundbxs){
 
     //Cabled check of result
     if(totAliveBB!=1) return -1;
-    if( x != 74 )         return -1;
-    if( y != 28 )         return -1;
-    if( w != 24 )         return -1;
-    if( h != 73 )         return -1;
+    if( x != 52 )         return -1;
+    if( y != 25 )         return -1;
+    if( w != 51 )         return -1;
+    if( h != 70 )         return -1;
 
     return 0;
 
 }
-
-
-//  074    028     024    073     01
-
-
 
 
 #ifdef __EMUL__
@@ -418,7 +401,7 @@ int main(int argc, char *argv[])
 
 int main()
 {
-    char *ImageName = "../../../test_samples/img_OUT0.pgm";
+    char *ImageName = "../../../test_samples/francesco.pgm";
 
 #endif
     unsigned int Wi, Hi;
@@ -510,20 +493,18 @@ int main()
         pmsis_exit(-5);
     }
 
-    pi_ram_alloc(&HyperRam, &Output_1, 60 * 80* 12 * sizeof(short int));
-    pi_ram_alloc(&HyperRam, &Output_2, 30 * 40* 14 * sizeof(short int));
-    pi_ram_alloc(&HyperRam, &Output_3, 15 * 20* 16 * sizeof(short int));
-    pi_ram_alloc(&HyperRam, &Output_4, 7  * 10* 14 * sizeof(short int));
+    pi_ram_alloc(&HyperRam, &Output_1, 60 * 80* 8 * sizeof(short int));
+    pi_ram_alloc(&HyperRam, &Output_2, 30 * 40* 8 * sizeof(short int));
+    pi_ram_alloc(&HyperRam, &Output_3, 15 * 20* 8 * sizeof(short int));
     
-    pi_ram_alloc(&HyperRam, &Output_5, 60 * 80* 24 * sizeof(short int));
-    pi_ram_alloc(&HyperRam, &Output_6, 30 * 40* 28 * sizeof(short int));
-    pi_ram_alloc(&HyperRam, &Output_7, 15 * 20* 32 * sizeof(short int));
-    pi_ram_alloc(&HyperRam, &Output_8, 7  * 10* 28 * sizeof(short int));
+    pi_ram_alloc(&HyperRam, &Output_4, 60 * 80* 16 * sizeof(short int));
+    pi_ram_alloc(&HyperRam, &Output_5, 30 * 40* 16 * sizeof(short int));
+    pi_ram_alloc(&HyperRam, &Output_6, 15 * 20* 16 * sizeof(short int));
+    
+    pi_ram_alloc(&HyperRam, &tmp_buffer_classes, 60 * 80* 8   * sizeof(short int));
+    pi_ram_alloc(&HyperRam, &tmp_buffer_boxes  , 60 * 80* 16   * sizeof(short int));
 
-    pi_ram_alloc(&HyperRam, &tmp_buffer_classes, 60 * 80* 12   * sizeof(short int));
-    pi_ram_alloc(&HyperRam, &tmp_buffer_boxes  , 60 * 80* 24   * sizeof(short int));
-
-    if(Output_1==NULL || Output_2==NULL || Output_3==NULL || Output_4==NULL || Output_5==NULL || Output_6==NULL || Output_7==NULL || Output_8==NULL )
+    if(Output_1==NULL || Output_2==NULL || Output_3==NULL || Output_4==NULL || Output_5==NULL || Output_6==NULL )
     {
         printf("Error Allocating OUTPUTs in L3\n");
         pmsis_exit(-7);
@@ -585,7 +566,7 @@ int main()
             }
         #endif
 
-        if (body_detectionCNN_Construct())
+        if (face_detectionCNN_Construct())
         {
             printf("Graph constructor exited with an error\n");
             pmsis_exit(-4);
@@ -599,7 +580,22 @@ int main()
     
 
         pi_cluster_send_task_to_cl(&cluster_dev, task);
-        body_detectionCNN_Destruct();
+        #ifndef FROM_CAMERA
+        {
+            unsigned int TotalCycles = 0, TotalOper = 0;
+            printf("\n");
+            for (unsigned int i=0; i<(sizeof(NNPerf)/sizeof(unsigned int)); i++)
+            {
+                printf("%45s: %10d, Operation: %10d, Operation/Cycle: %f\n", NNLName[i], NNPerf[i], NNOperCount[i], ((float) NNOperCount[i])/ NNPerf[i]);
+                TotalCycles += NNPerf[i]; TotalOper += NNOperCount[i];
+            }
+            printf("\n");
+            printf("%45s: %10d, Operation: %10d, Operation/Cycle: %f\n", "Total", TotalCycles, TotalOper, ((float) TotalOper)/ TotalCycles);
+            printf("\n");
+        }
+        #endif  /* FROM_CAMERA */
+
+        face_detectionCNN_Destruct();
 
         //SSD Allocations
         SSDKernels_L1_Memory = pmsis_l1_malloc(_SSDKernels_L1_Memory_SIZE);

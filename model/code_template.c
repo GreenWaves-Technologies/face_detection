@@ -29,7 +29,7 @@ void ${gen.project_name}Model(unsigned int L1Memory, unsigned int L2Memory, unsi
     AT_SetGraphCtrl(AT_GRAPH_PRODUCE_OPERINFOS, AT_OPT_ON);
     AT_SetGraphCtrl(AT_GRAPH_PRODUCE_OPERINFOS_CVAR_NAME, "NNOperCount");
 
-//    AT_SetGraphCtrl(AT_GRAPH_REORDER_CONSTANT_IN, AT_OPT_ON);
+    AT_SetGraphCtrl(AT_GRAPH_REORDER_CONSTANT_IN, AT_OPT_ON);
 
     SetUsedFilesNames(0, 2, "CNN_BasicKernels.h", "${gen.project_name}.h");
     SetGeneratedFilesNames("${gen.project_name}Kernels.c", "${gen.project_name}Kernels.h");

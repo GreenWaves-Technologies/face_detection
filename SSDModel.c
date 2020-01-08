@@ -145,25 +145,20 @@ int main(int argc, char **argv)
 
     LoadLibKernels();
 
-    n_anchors = 6;
-    GenerateSSD3Dto2D("SDD3Dto2DSoftmax_80_60_12", 80, 60, 12, n_classes,1);
-    GenerateSSD3Dto2D("SDD3Dto2D_80_60_24",        80, 60, 24, n_classes,0);
+    n_anchors = 4;
+    GenerateSSD3Dto2D("SDD3Dto2DSoftmax_80_60_12", 80, 60, 8, n_classes,1);
+    GenerateSSD3Dto2D("SDD3Dto2D_80_60_24",        80, 60, 16, n_classes,0);
     GeneratePredecoder("Predecoder80_60",          80, 60, n_anchors, n_offsets, n_classes);
 
-    n_anchors = 7;
-    GenerateSSD3Dto2D("SDD3Dto2DSoftmax_40_30_14", 40, 30, 14, n_classes,1);
-    GenerateSSD3Dto2D("SDD3Dto2D_40_30_28",        40, 30, 28, n_classes,0);
+    
+    GenerateSSD3Dto2D("SDD3Dto2DSoftmax_40_30_14", 40, 30, 8, n_classes,1);
+    GenerateSSD3Dto2D("SDD3Dto2D_40_30_28",        40, 30, 16, n_classes,0);
     GeneratePredecoder("Predecoder40_30",          40, 30, n_anchors, n_offsets, n_classes);
 
-    n_anchors = 8;
-    GenerateSSD3Dto2D("SDD3Dto2DSoftmax_20_15_16", 20, 15, 16, n_classes,1);
-    GenerateSSD3Dto2D("SDD3Dto2D_20_15_32",        20, 15, 32, n_classes,0);
+    
+    GenerateSSD3Dto2D("SDD3Dto2DSoftmax_20_15_16", 20, 15, 8, n_classes,1);
+    GenerateSSD3Dto2D("SDD3Dto2D_20_15_32",        20, 15, 16, n_classes,0);
     GeneratePredecoder("Predecoder20_15",          20, 15, n_anchors, n_offsets, n_classes);
-
-    n_anchors = 7;
-    GenerateSSD3Dto2D("SDD3Dto2DSoftmax_10_7_14",  10,  7, 14, n_classes,1);
-    GenerateSSD3Dto2D("SDD3Dto2D_10_7_28",         10,  7, 28, n_classes,0);
-    GeneratePredecoder("Predecoder10_7",           10,  7, n_anchors, n_offsets, n_classes);
 
     // Now that we are done with model parsing we generate the code
     GenerateTilingCode();
