@@ -281,7 +281,7 @@ static void RunSSD()
 
     SDD3Dto2DSoftmax_80_60_12(Output_1,tmp_buffer_classes,13,2);
     SDD3Dto2D_80_60_24(Output_4,tmp_buffer_boxes,0,0);
-    Predecoder80_60(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_1, &bbxs,11);
+    Predecoder80_60(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_1, &bbxs,12);
 
     SDD3Dto2DSoftmax_40_30_14(Output_2,tmp_buffer_classes,14,2);
     SDD3Dto2D_40_30_28(Output_5,tmp_buffer_boxes,0,0);
@@ -377,10 +377,10 @@ int checkResults(bboxs_t *boundbxs){
 
     //Cabled check of result
     if(totAliveBB!=1) return -1;
-    if( x != 52 )         return -1;
-    if( y != 25 )         return -1;
-    if( w != 51 )         return -1;
-    if( h != 70 )         return -1;
+    if( x != 50 )         return -1;
+    if( y != 23 )         return -1;
+    if( w != 55 )         return -1;
+    if( h != 73 )         return -1;
 
     return 0;
 
