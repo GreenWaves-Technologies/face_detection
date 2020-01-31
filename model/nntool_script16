@@ -1,7 +1,12 @@
 adjust
 fusions
-aquant -f 16 quant_samples/49_Greeting_peoplegreeting_49_150_s1_i4j1.png -D 256 -O 0
-aquant -f 16 quant_samples/8_Election_Campain_Election_Campaign_8_297_s1_i0j0.png -D 256 -O 0
+set input_divisor 256
+set input_offset 0
+aquant -f 16 quant_samples/49_Greeting_peoplegreeting_49_150_s1_i4j1.png
+aquant -f 16 quant_samples/8_Election_Campain_Election_Campaign_8_297_s1_i0j0.png
 #This take too long for an example
 #aquant -f 16 quant_samples/*.png -D 256 -O 0
+set default_output_exec_location AT_MEM_L3_HRAM
+set l3_ram_ext_managed 1
+set l2_ram_ext_managed 0
 save_state
