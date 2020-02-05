@@ -9,4 +9,6 @@ aquant -f 16 quant_samples/8_Election_Campain_Election_Campaign_8_297_s1_i0j0.pn
 set default_output_exec_location AT_MEM_L3_HRAM
 set l3_ram_ext_managed 1
 set l2_ram_ext_managed 0
+nodeoption 1 PARALLELFEATURES 0
+nodeoption 3 PARALLELFEATURES 0
 save_state
