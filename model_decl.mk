@@ -61,6 +61,7 @@ MODEL_SRCS += $(GEN_PATH)/CNN_BiasReLULinear_BasicKernels.c
 MODEL_SRCS += $(GEN_PATH)/CNN_Conv_BasicKernels.c
 MODEL_SRCS += $(GEN_PATH)/CNN_Conv_DP_BasicKernels.c
 MODEL_SRCS += $(GEN_PATH)/CNN_Conv_DW_BasicKernels.c
+MODEL_SRCS += $(GEN_PATH)/CNN_Conv_DW_DP_BasicKernels.c
 MODEL_SRCS += $(GEN_PATH)/CNN_Pooling_BasicKernels.c
 MODEL_SRCS += $(GEN_PATH)/CNN_MatAlgebra.c
 MODEL_SRCS += $(GEN_PATH)/CNN_SoftMax.c
