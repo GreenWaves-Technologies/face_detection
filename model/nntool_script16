@@ -2,8 +2,7 @@ adjust
 fusions
 set input_divisor 256
 set input_offset 0
-aquant -f 16 quant_samples/49_Greeting_peoplegreeting_49_150_s1_i4j1.png
-aquant -f 16 quant_samples/8_Election_Campain_Election_Campaign_8_297_s1_i0j0.png
+aquant -f 16 quant_samples/2*
 #This take too long for an example
 #aquant -f 16 quant_samples/*.png -D 256 -O 0
 set default_output_exec_location AT_MEM_L3_HRAM
