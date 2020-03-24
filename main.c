@@ -17,6 +17,8 @@
 #include "bsp/display/ili9341.h"
 #include "bsp/camera/himax.h"
 
+#include "setup.h"
+
 #ifdef __EMUL__
 #ifdef PERF
 #undef PERF
@@ -69,6 +71,16 @@ PI_L2 short int *tmp_buffer_classes, *tmp_buffer_boxes;
 
 typedef short int MNIST_IMAGE_IN_T;
 
+
+#define INPUT_1_Q  15
+
+#define OUTPUT_1_Q 13
+#define OUTPUT_4_Q 12
+#define OUTPUT_2_Q 11
+#define OUTPUT_5_Q 13
+#define OUTPUT_3_Q 12
+#define OUTPUT_6_Q 12
+
 L2_MEM MNIST_IMAGE_IN_T *ImageIn;
 
 extern PI_L2 Alps * anchor_layer_1;
@@ -91,9 +103,9 @@ PI_L2 bboxs_t bbxs;
 static int initSSD(){
 
     #ifdef __EMUL__
-    bbxs.bbs = pmsis_l2_malloc(sizeof(bbox_fp_t)*200);
+    bbxs.bbs = pmsis_l2_malloc(sizeof(bbox_fp_t)*MAX_BB);
     #else
-    bbxs.bbs = pmsis_l2_malloc(sizeof(bbox_t)*200);
+    bbxs.bbs = pmsis_l2_malloc(sizeof(bbox_t)*MAX_BB);
     #endif
 
     if(bbxs.bbs==NULL){
@@ -166,8 +178,8 @@ void printBboxes_forPython(bboxs_t *boundbxs){
 
 #define NON_MAX_THRES 10
 
-int rect_intersect_area( unsigned short a_x, unsigned short a_y, unsigned short a_w, unsigned short a_h,
-                         unsigned short b_x, unsigned short b_y, unsigned short b_w, unsigned short b_h ){
+int rect_intersect_area( short a_x, short a_y, short a_w, short a_h,
+                         short b_x, short b_y, short b_w, short b_h ){
 
     #define MIN(a,b) ((a) < (b) ? (a) : (b))
     #define MAX(a,b) ((a) > (b) ? (a) : (b))
@@ -228,35 +240,6 @@ static void RunNN()
 
     face_detectionCNN(ImageIn, Output_1, Output_2, Output_3, Output_4, Output_5, Output_6);
 
-
-#if 0
-    int size_to_check=20;
-    // l2 memory for Output_3
-    short * L2_buffer = (short int *) pmsis_l2_malloc(size_to_check*sizeof(short));
-
-    // memory allocation has been successful?
-    if (L2_buffer ==NULL){printf("\n\nL2memory allocation fail ...\n\n");}
-
-    // pass data from L3 to L2
-    //pi_ram_read(&HyperRam, Output_3, L2_buffer, size_to_check*sizeof(short int));
-
-    pi_cl_ram_req_t buff_req;
-    pi_cl_ram_read(&HyperRam,Output_8, L2_buffer, size_to_check*sizeof(short int), &buff_req);
-    pi_cl_ram_read_wait(&buff_req);
-    
-
-    printf("Debug:\n");
-    // check the value of the outputs for the given input image
-    for (int loc = 0;loc<size_to_check;loc++){
-//    printf("\n\n\nFixed point, L2_Output_3 [%d] : %d\n\n\n", loc, L2_Output_3[loc]);
-        printf(" %f", loc, FIX2FP(L2_buffer[loc], 11));
-    }
-    printf("\n");
-
-    // free L2 memory after analysis
-    pmsis_l2_malloc_free(L2_buffer, size_to_check*sizeof(short));
-#endif
-
     ti_nn = gap_cl_readhwtimer()-ti;
     PRINTF("Cycles NN : %10d\n",ti_nn);
 }
@@ -279,18 +262,17 @@ static void RunSSD()
     
     //TODO Quantization is likely wrong need to check output
 
-    SDD3Dto2DSoftmax_80_60_12(Output_1,tmp_buffer_classes,13,2);
+    SDD3Dto2DSoftmax_80_60_12(Output_1,tmp_buffer_classes,OUTPUT_1_Q,2);
     SDD3Dto2D_80_60_24(Output_4,tmp_buffer_boxes,0,0);
-    Predecoder80_60(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_1, &bbxs,12);
+    Predecoder80_60(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_1, &bbxs,OUTPUT_4_Q);
 
-    SDD3Dto2DSoftmax_40_30_14(Output_2,tmp_buffer_classes,14,2);
+    SDD3Dto2DSoftmax_40_30_14(Output_2,tmp_buffer_classes,OUTPUT_2_Q,2);
     SDD3Dto2D_40_30_28(Output_5,tmp_buffer_boxes,0,0);
-    Predecoder40_30(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_2, &bbxs,12);
+    Predecoder40_30(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_2, &bbxs,OUTPUT_5_Q);
     
-    SDD3Dto2DSoftmax_20_15_16(Output_3,tmp_buffer_classes,13,2);
+    SDD3Dto2DSoftmax_20_15_16(Output_3,tmp_buffer_classes,OUTPUT_3_Q,2);
     SDD3Dto2D_20_15_32(Output_6,tmp_buffer_boxes,0,0);
-    Predecoder20_15(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_3,&bbxs,12);
-
+    Predecoder20_15(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_3, &bbxs,OUTPUT_6_Q);
 
     bbox_t temp;
 
@@ -377,10 +359,10 @@ int checkResults(bboxs_t *boundbxs){
 
     //Cabled check of result
     if(totAliveBB!=1) return -1;
-    if( x != 50 )         return -1;
-    if( y != 23 )         return -1;
-    if( w != 55 )         return -1;
-    if( h != 73 )         return -1;
+    if( x != 40 )         return -1;
+    if( y != 19 )         return -1;
+    if( w != 76 )         return -1;
+    if( h != 74 )         return -1;
 
     return 0;
 
@@ -401,14 +383,13 @@ int main(int argc, char *argv[])
 
 int main()
 {
-    char *ImageName = "../../../test_samples/francesco.pgm";
+    char *ImageName = "../../../test_samples/francesco.pgm";    
 
 #endif
     unsigned int Wi, Hi;
     //Input image size
     unsigned int W = 160, H = 120;
     unsigned int Wcam=324, Hcam=244;
-
 
     PRINTF("Entering main controller\n");
 
@@ -472,13 +453,13 @@ int main()
 
     for (int i = W * H - 1; i >= 0; i--)
     {
-        ImageIn[i] = ImageInChar[i] << 6; //Input is Q14
+        ImageIn[i] = ((short)ImageInChar[i]) << (INPUT_1_Q - 8); //Input image is naturally Q8
     }
 
     #else
     for (int i = W * H - 1; i >= 0; i--)
     {
-        ImageIn[i] = inImage[i] << 6; //Input is Q14
+        ImageIn[i] = inImage[i] << (INPUT_1_Q - 8); //Input image is naturally Q8
     }
     #endif
 #endif
@@ -513,7 +494,7 @@ int main()
     if(tmp_buffer_classes==NULL || tmp_buffer_classes==NULL)
     {
         printf("Error Allocating SSD Temp buffers in L3\n");
-        pmsis_exit(-7);
+        pmsis_exit(-6);
     }
 
     #ifndef __EMUL__
@@ -525,7 +506,7 @@ int main()
     if (pi_cluster_open(&cluster_dev))
     {
         printf("Cluster open failed !\n");
-        pmsis_exit(-7);
+        pmsis_exit(-5);
     }
 
     //Pay attention to hyper-flash freq while setting frequency of FC 
@@ -536,7 +517,7 @@ int main()
     if(initSSD())
     {
         printf("NN Init exited with an error\n");
-        pmsis_exit(-6);
+        pmsis_exit(-4);
     }
     
     printf("Running NN\n");
@@ -544,7 +525,7 @@ int main()
     struct pi_cluster_task *task = pmsis_l2_malloc(sizeof(struct pi_cluster_task));
     if(task==NULL) {
         printf("Alloc Error! \n");
-        pmsis_exit(-5);
+        pmsis_exit(-3);
     }
     
     int iter=1;
@@ -561,7 +542,7 @@ int main()
             int Yoffset = (Hcam - 120)/2;
             for(int y=0;y<120;y++){
                 for(int x=0;x<160;x++){
-                    ImageIn[y*160+x] = ((short int)ImageInChar[((y+Yoffset)*Wcam)+(x+Xoffset)]) << 6;
+                    ImageIn[y*160+x] = ((short int)ImageInChar[((y+Yoffset)*Wcam)+(x+Xoffset)]) << (INPUT_1_Q - 8);
                 }
             }
         #endif
@@ -580,6 +561,7 @@ int main()
     
 
         pi_cluster_send_task_to_cl(&cluster_dev, task);
+
         #ifndef FROM_CAMERA
         {
             unsigned int TotalCycles = 0, TotalOper = 0;
@@ -618,16 +600,20 @@ int main()
         pmsis_l1_malloc_free(SSDKernels_L1_Memory,_SSDKernels_L1_Memory_SIZE);
         pmsis_l2_malloc_free(SSDKernels_L2_Memory,_SSDKernels_L2_Memory_SIZE);
 
-        #ifdef FROM_CAMERA
+        
         for(int y=0;y<120;y++){
             for(int x=0;x<160;x++){
-                ImageInChar[y*160+x] = (unsigned char)(ImageIn[(y*160)+(x)] >> 6);
+                ImageInChar[y*160+x] = (unsigned char)(ImageIn[(y*160)+(x)] >> (INPUT_1_Q - 8));
             }
         }
         //Draw BBs
         drawBboxes(&bbxs,ImageInChar);
+        #ifdef FROM_CAMERA
         //Send to Screen
         pi_display_write(&ili, &buffer, 0, 0, 160, 120);
+        #else
+        WriteImageToFile("../../../test_out.pgm", 160, 120, ImageInChar);
+
         #endif
     }
 

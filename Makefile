@@ -52,20 +52,20 @@ MODEL_L3_CONST=hflash
 
 pulpChip = GAP
 APP = face_detection
-USE_PMSIS_BSP=1
+
+
 
 PULP_APP_SRCS += main.c ImgIO.c ImageDraw.c SSDKernels.c SSDBasicKernels.c SSDParams.c $(MODEL_SRCS)
 
-GAP_FLAGS += -w -O2 -s -mno-memcpy -fno-tree-loop-distribute-patterns
+GAP_FLAGS += -w -O3 -s -mno-memcpy -fno-tree-loop-distribute-patterns
 GAP_FLAGS += -I. -I./helpers -I$(TILER_EMU_INC) -I$(TILER_INC) -I$(GEN_PATH) -I$(MODEL_BUILD)
 
 ifeq ($(platform),gvsoc)
   $(info Platform is GVSOC)
-  override runner_args += --config-opt=flash/fs/files=$(realpath $(MODEL_TENSORS))
-#  GAP_FLAGS += -DNO_BRIDGE
+  READFS_FILES=$(MODEL_TENSORS)
 else
-  $(info Platform is GAPUINO)
-  PLPBRIDGE_FLAGS = -f $(MODEL_TENSORS)
+  PLPBRIDGE_FLAGS = -f
+  READFS_FILES=$(MODEL_TENSORS)
 endif
 
 export GAP_USE_OPENOCD=1

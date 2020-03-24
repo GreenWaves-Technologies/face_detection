@@ -11,7 +11,7 @@
 #include <math.h>
 #include "SSDBasicKernels.h"
 #include "SSDParams.h"
-
+#include "setup.h"
 
 static inline unsigned int __attribute__((always_inline)) ChunkSize(unsigned int X)
 
@@ -281,10 +281,14 @@ void KerPredecoderShort(KerPredecoderShort_ArgT *Arg){
 
             //Here it would be nice to add a different confidence for each class
                 if(Classes[i*n_classes+n] > anch->confidence_thr){
-                //printf("Confidence > %f:  %f\n", FIX2FP(anch->confidence_thr,15),FIX2FP(classes[i*n_classes+n],15));
-                //Here we pass the row index to find the correct row in the boxes
+                    //printf("Confidence > %f:  %f\n", FIX2FP(anch->confidence_thr,15),FIX2FP(classes[i*n_classes+n],15));
+                    //Here we pass the row index to find the correct row in the boxes
+                    //Check if there is still space to store BB
+                    if(bbxs->num_bb>=MAX_BB){
+                        printf("Reached Max BB number...\n");
+                        return;
+                    }
                     KerEstimate_bbox(i, TileIndex*Std_H+i,Classes[i*n_classes+n], Boxes, Boxes_Q,anch, bbxs, n);
-                
                 }
             }
         }

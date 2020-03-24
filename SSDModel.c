@@ -63,7 +63,7 @@ void GenerateSSD3Dto2D(char *Name, int Wi, int Hi, int Fi, int classes, int DoSo
                         C_Arg("n_classes")
                         ))),
         KerArgs(2,
-            KerArg("In",  KerArgSpace(1,KER_ITER_TILE0),  OBJ_IN_DB_L2DB,  Wi*Hi, Fi, sizeof(short), 0, OBJ_CONSTRAINTS_TILE_VER, 0, "In"),
+            KerArg("In",  KerArgSpace(1,KER_ITER_TILE0), OBJ_IN_DB_L2DB,  Wi*Hi, Fi, sizeof(short), 0, OBJ_CONSTRAINTS_TILE_VER, 0, "In"),
             KerArg("Out", KerArgSpace(1,KER_ITER_TILE0), OBJ_OUT_DB_L2DB, Fi, Wi*Hi,sizeof(short), 0, 0, 0, "Out")
         )
     );
@@ -149,12 +149,10 @@ int main(int argc, char **argv)
     GenerateSSD3Dto2D("SDD3Dto2DSoftmax_80_60_12", 80, 60, 8, n_classes,1);
     GenerateSSD3Dto2D("SDD3Dto2D_80_60_24",        80, 60, 16, n_classes,0);
     GeneratePredecoder("Predecoder80_60",          80, 60, n_anchors, n_offsets, n_classes);
-
     
     GenerateSSD3Dto2D("SDD3Dto2DSoftmax_40_30_14", 40, 30, 8, n_classes,1);
     GenerateSSD3Dto2D("SDD3Dto2D_40_30_28",        40, 30, 16, n_classes,0);
     GeneratePredecoder("Predecoder40_30",          40, 30, n_anchors, n_offsets, n_classes);
-
     
     GenerateSSD3Dto2D("SDD3Dto2DSoftmax_20_15_16", 20, 15, 8, n_classes,1);
     GenerateSSD3Dto2D("SDD3Dto2D_20_15_32",        20, 15, 16, n_classes,0);

@@ -39,7 +39,7 @@ RM=rm -f
 
 NNTOOL=nntool
 
-MODEL_GENFLAGS_EXTRA= -c "model/code_template.c"
+MODEL_GENFLAGS_EXTRA= -c "model/code_template.c" #--header_file
 
 
 # Here we set the memory allocation for the generated kernels

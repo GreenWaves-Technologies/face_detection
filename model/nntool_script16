@@ -1,13 +1,19 @@
+weight_equalization 0.001
 adjust
 fusions
 set input_divisor 256
 set input_offset 0
+#Next line is a workround for first layer bug
+nodeoption 1 FORCEDPCONV 0
+#aquant -f 16 quant_samples/*
 aquant -f 16 quant_samples/2*
+#aquant -f 16 test_samples/francesco.pgm
 #This take too long for an example
 #aquant -f 16 quant_samples/*.png -D 256 -O 0
 set default_output_exec_location AT_MEM_L3_HRAM
 set l3_ram_ext_managed 1
 set l2_ram_ext_managed 0
-nodeoption 1 PARALLELFEATURES 0
+#nodeoption 1 PARALLELFEATURES 0
 nodeoption 3 PARALLELFEATURES 0
+#set dump_tensors
 save_state
