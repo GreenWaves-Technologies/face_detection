@@ -359,10 +359,10 @@ int checkResults(bboxs_t *boundbxs){
 
     //Cabled check of result
     if(totAliveBB!=1) return -1;
-    if( x != 40 )         return -1;
-    if( y != 19 )         return -1;
-    if( w != 76 )         return -1;
-    if( h != 74 )         return -1;
+    if( x != 50 )         return -1;
+    if( y != 23 )         return -1;
+    if( w != 55 )         return -1;
+    if( h != 73 )         return -1;
 
     return 0;
 

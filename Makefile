@@ -16,6 +16,7 @@ endif
 
 $(info Building GAP8 mode with $(QUANTIZATION_BITS) bit quantization)
 
+
 # For debugging don't load an image
 # Run the network with zeros
 #NO_IMAGE=1
@@ -51,7 +52,8 @@ MODEL_L3_EXEC=hram
 MODEL_L3_CONST=hflash
 
 pulpChip = GAP
-APP = face_detection
+
+APP=face_detection
 
 
 
