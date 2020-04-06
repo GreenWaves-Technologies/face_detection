@@ -369,23 +369,10 @@ int checkResults(bboxs_t *boundbxs){
 }
 
 
-#ifdef __EMUL__
-int main(int argc, char *argv[])
-{
-
-	if (argc < 2)
-    {
-        printf("Usage: mnist [image_file]\n");
-        exit(1);
-    }
-    char *ImageName = argv[1];
-#else
-
-int main()
+int face_detection()
 {
     char *ImageName = "../../../test_samples/francesco.pgm";    
 
-#endif
     unsigned int Wi, Hi;
     //Input image size
     unsigned int W = 160, H = 120;
@@ -632,13 +619,17 @@ int main()
     
     if(checkResults(&bbxs)==0){
         printf("Correct results!\n");
-        return 0;
+        pmsis_exit(0);
     }
     else{
         printf("Wrong results!\n");
-        return -1;
+        pmsis_exit(-1);
     }
+}
 
 
-    return 0;
+int main(void)
+{
+    PRINTF("\n\n\t *** Face Detection ***\n\n");
+    return pmsis_kickoff((void *) face_detection);
 }
