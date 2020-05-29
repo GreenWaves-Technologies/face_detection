@@ -276,23 +276,22 @@ void KerPredecoderShort(KerPredecoderShort_ArgT *Arg){
     if(!CoreId){
         for(unsigned int i=0;i<H;i++){
             int global_index = TileIndex*Std_H;
-            //we start from 1 since we skip the Background
+            //Start from 1 since we skip classe 0 which is the Background
             for(uint8_t n=1;n<W;n++){
-
-            //Here it would be nice to add a different confidence for each class
+                //[TODO] Here it would be nice to add a different confidence for each class
                 if(Classes[i*n_classes+n] > anch->confidence_thr){
                     //printf("Confidence > %f:  %f\n", FIX2FP(anch->confidence_thr,15),FIX2FP(classes[i*n_classes+n],15));
-                    //Here we pass the row index to find the correct row in the boxes
-                    //Check if there is still space to store BB
+                    
+                    //Check if there is still space to store BB otherwise drop
                     if(bbxs->num_bb>=MAX_BB){
                         printf("Reached Max BB number...\n");
                         return;
                     }
+                    //Here we pass the row index to find the correct row in the boxes
                     KerEstimate_bbox(i, TileIndex*Std_H+i,Classes[i*n_classes+n], Boxes, Boxes_Q,anch, bbxs, n);
                 }
             }
         }
     }
-
 }
 

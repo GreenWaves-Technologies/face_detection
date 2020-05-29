@@ -8,6 +8,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "Gap.h"
 #include "face_detectionKernels.h"
@@ -230,8 +231,6 @@ void non_max_suppress(bboxs_t * boundbxs){
 
 static void RunNN()
 {
-
-
     unsigned int ti,ti_nn,ti_ssd;
 
     gap_cl_starttimer();
@@ -289,8 +288,6 @@ static void RunSSD()
         }
     }while(changed);
 
-    //The signature of the function should be changed because the input image is not square
-    //TODO!!!!!!
     convertCoordBboxes(&bbxs,160,120); 
     non_max_suppress(&bbxs);
 
@@ -359,10 +356,10 @@ int checkResults(bboxs_t *boundbxs){
 
     //Cabled check of result
     if(totAliveBB!=1) return -1;
-    if( x != 50 )         return -1;
-    if( y != 23 )         return -1;
-    if( w != 55 )         return -1;
-    if( h != 73 )         return -1;
+    if( x != 52 )         return -1;
+    if( y != 25 )         return -1;
+    if( w != 52 )         return -1;
+    if( h != 70 )         return -1;
 
     return 0;
 
@@ -553,13 +550,12 @@ int face_detection()
         {
             unsigned int TotalCycles = 0, TotalOper = 0;
             printf("\n");
-            for (unsigned int i=0; i<(sizeof(NNPerf)/sizeof(unsigned int)); i++)
-            {
-                printf("%45s: %10d, Operation: %10d, Operation/Cycle: %f\n", NNLName[i], NNPerf[i], NNOperCount[i], ((float) NNOperCount[i])/ NNPerf[i]);
-                TotalCycles += NNPerf[i]; TotalOper += NNOperCount[i];
+            for (int i=0; i<(sizeof(AT_GraphPerf)/sizeof(unsigned int)); i++) {
+                printf("%45s: Cycles: %10d, Operations: %10d, Operations/Cycle: %f\n", AT_GraphNodeNames[i], AT_GraphPerf[i], AT_GraphOperInfosNames[i], ((float) AT_GraphOperInfosNames[i])/ AT_GraphPerf[i]);
+                TotalCycles += AT_GraphPerf[i]; TotalOper += AT_GraphOperInfosNames[i];
             }
             printf("\n");
-            printf("%45s: %10d, Operation: %10d, Operation/Cycle: %f\n", "Total", TotalCycles, TotalOper, ((float) TotalOper)/ TotalCycles);
+            printf("%45s: Cycles: %10d, Operations: %10d, Operations/Cycle: %f\n", "Total", TotalCycles, TotalOper, ((float) TotalOper)/ TotalCycles);
             printf("\n");
         }
         #endif  /* FROM_CAMERA */

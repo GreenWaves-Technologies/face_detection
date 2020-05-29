@@ -31,17 +31,15 @@ $(MODEL_STATE): $(MODEL_TFLITE)
 
 # Runs NNTOOL with its state file to generate the autotiler model code
 $(MODEL_BUILD)/$(MODEL_SRC): $(MODEL_STATE) $(MODEL_TFLITE)
-	$(NNTOOL) -g -M $(MODEL_BUILD) -m $(MODEL_SRC) -T $(TENSORS_DIR) $(MODEL_GENFLAGS_EXTRA) $<
+	$(NNTOOL) -g -M $(MODEL_BUILD) -m $(MODEL_SRC) -T $(TENSORS_DIR) -H $(MODEL_HEADER) $(MODEL_GENFLAGS_EXTRA) $<
 
 # Build the code generator from the model code
 $(MODEL_GEN_EXE): $(MODEL_BUILD)/$(MODEL_SRC)
-	gcc -g -o $(MODEL_GEN_EXE) -I$(TILER_INC) -I$(GEN_PATH) $(MODEL_BUILD)/$(MODEL_SRC) $(GEN_PATH)/CNN_Generators.c $(TILER_LIB) # -lSDL2 -lSDL2_ttf
+	gcc -g -o $(MODEL_GEN_EXE) -I$(TILER_INC) $(MODEL_GEN_INCLUDE_POW2) -I$(GEN_PATH) $(MODEL_BUILD)/$(MODEL_SRC) $(MODEL_GEN_POW2) $(TILER_LIB) 
 
 # Run the code generator to generate GAP graph and kernel code
 $(MODEL_GEN_C): $(MODEL_GEN_EXE)
-	$(MODEL_GEN_EXE) -o $(MODEL_BUILD) -c $(MODEL_BUILD) #--L1 $(MODEL_L1_MEMORY) --L2 $(MODEL_L2_MEMORY) --L3 $(MODEL_L3_MEMORY) 
-
-# --PExecL3 $(MODEL_L3_EXEC) --PConstL3 $(MODEL_L3_CONST)
+	$(MODEL_GEN_EXE) -o $(MODEL_BUILD) -c $(MODEL_BUILD) --L1 $(MODEL_L1_MEMORY) --L2 $(MODEL_L2_MEMORY) --L3 $(MODEL_L3_MEMORY) 
 
 model: $(MODEL_GEN_C)
 

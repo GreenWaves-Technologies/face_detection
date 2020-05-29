@@ -51,16 +51,11 @@ MODEL_L3_EXEC=hram
 # qpsiflash - Quad SPI Flash
 MODEL_L3_CONST=hflash
 
-pulpChip = GAP
-
 APP=face_detection
+APP_SRCS += main.c ImgIO.c ImageDraw.c SSDKernels.c SSDBasicKernels.c SSDParams.c $(MODEL_SRCS) $(MODEL_LIB_POW2)
 
-
-
-PULP_APP_SRCS += main.c ImgIO.c ImageDraw.c SSDKernels.c SSDBasicKernels.c SSDParams.c $(MODEL_SRCS)
-
-GAP_FLAGS += -w -O3 -s -mno-memcpy -fno-tree-loop-distribute-patterns
-GAP_FLAGS += -I. -I./helpers -I$(TILER_EMU_INC) -I$(TILER_INC) -I$(GEN_PATH) -I$(MODEL_BUILD)
+APP_CFLAGS += -w -O2 -s -mno-memcpy -fno-tree-loop-distribute-patterns
+APP_CFLAGS += -I. -I./helpers $(MODEL_LIB_INCLUDE_POW2) -I$(TILER_EMU_INC) -I$(TILER_INC) -I$(GEN_PATH) -I$(MODEL_BUILD)
 
 ifeq ($(platform),gvsoc)
   $(info Platform is GVSOC)
