@@ -1,4 +1,3 @@
-#weight_equalization 0.001
 adjust
 fusions --pow2
 set input_divisor 256
@@ -10,7 +9,7 @@ aquant -s POW2 -f 16 quant_samples/2*
 set default_output_exec_location "AT_MEM_L3_HRAM"
 set l3_ram_ext_managed true
 set l2_ram_ext_managed false
-set graph_reorder_constant_in false
+set graph_reorder_constant_in true
 set graph_const_exec_from_flash true
 set graph_produce_node_names true
 set graph_produce_operinfos true
