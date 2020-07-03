@@ -16,10 +16,11 @@ endif
 
 $(info Building GAP8 mode with $(QUANTIZATION_BITS) bit quantization)
 
+## Mute printf in source code
+#SILENT=1
 
-# For debugging don't load an image
-# Run the network with zeros
-#NO_IMAGE=1
+## Enable image grub from camera and disaply output to lcd
+#FROM_CAMERA=1
 
 # The training of the model is slightly different depending on
 # the quantization. This is because in 8 bit mode we used signed
@@ -57,6 +58,13 @@ APP_SRCS += main.c ImgIO.c ImageDraw.c SSDKernels.c SSDBasicKernels.c SSDParams.
 APP_CFLAGS += -w -O2 -s -mno-memcpy -fno-tree-loop-distribute-patterns
 APP_CFLAGS += -I. -I./helpers $(MODEL_LIB_INCLUDE_POW2) -I$(TILER_EMU_INC) -I$(TILER_INC) -I$(GEN_PATH) -I$(MODEL_BUILD)
 
+ifeq ($(SILENT),1)
+  APP_CFLAGS += -DSILENT=1
+endif
+ifeq ($(FROM_CAMERA),1)
+  APP_CFLAGS += -DFROM_CAMERA=1
+endif
+
 ifeq ($(platform),gvsoc)
   $(info Platform is GVSOC)
   READFS_FILES=$(MODEL_TENSORS)
@@ -65,7 +73,6 @@ else
   READFS_FILES=$(MODEL_TENSORS)
 endif
 
-export GAP_USE_OPENOCD=1
 io=host
 
 #####Here we add cutom kernels that are not yet integrated into AT libraries

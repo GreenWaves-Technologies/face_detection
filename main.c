@@ -20,12 +20,12 @@
 
 #include "setup.h"
 
-#ifdef __EMUL__
-#ifdef PERF
-#undef PERF
-#endif
-#endif
 
+#if SILENT
+#define PRINTF(...) ((void) 0)
+#else
+#define PRINTF printf
+#endif
 
 //#define PRINTF(...) ((void) 0)
 #define PRINTF printf
