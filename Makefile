@@ -75,7 +75,7 @@ SSD_MODEL_GEN_C = $(addsuffix .c, $(SSD_MODEL_GEN))
 SSD_MODEL_GEN_CLEAN = $(SSD_MODEL_GEN_C) $(addsuffix .h, $(SSD_MODEL_GEN))
 
 GenSSDTile: SSDModel.c
-	gcc -g -o GenSSDTile -I"$(TILER_INC)" SSDModel.c $(TILER_LIB)
+	gcc -g -o GenSSDTile -I$(TILER_EMU_INC) -I"$(TILER_INC)" SSDModel.c $(TILER_LIB)
 
 $(SSD_MODEL_GEN_C): GenSSDTile
 	./GenSSDTile
