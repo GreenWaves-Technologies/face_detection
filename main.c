@@ -377,8 +377,6 @@ int face_detection()
 
     PRINTF("Entering main controller\n");
 
-    if (rt_event_alloc(NULL, 16)) return -1;
-
 #ifdef FROM_CAMERA
 
     unsigned char *ImageInChar = (unsigned char *) pmsis_l2_malloc( Wcam * Hcam * sizeof(unsigned char));
