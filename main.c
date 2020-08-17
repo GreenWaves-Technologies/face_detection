@@ -356,10 +356,10 @@ int checkResults(bboxs_t *boundbxs){
 
     //Cabled check of result
     if(totAliveBB!=1) return -1;
-    if( x != 52 )         return -1;
+    if( x != 53 )         return -1;
     if( y != 25 )         return -1;
-    if( w != 52 )         return -1;
-    if( h != 70 )         return -1;
+    if( w != 51 )         return -1;
+    if( h != 71 )         return -1;
 
     return 0;
 
@@ -564,7 +564,7 @@ int face_detection()
         SSDKernels_L1_Memory = pmsis_l1_malloc(_SSDKernels_L1_Memory_SIZE);
         SSDKernels_L2_Memory = pmsis_l2_malloc(_SSDKernels_L2_Memory_SIZE);
 
-        if(SSDKernels_L1_Memory==NULL || SSDKernels_L2_Memory==NULL)
+        if(face_detection_L1_Memory==NULL || face_detection_L2_Memory==NULL)
         {
             printf("SSD L1 and/or L2 allocation error\n");
             pmsis_exit(-3);
@@ -606,7 +606,6 @@ int face_detection()
 
 #ifdef __EMUL__
     dt_close_dump_file();
-#else
 #endif
 
     printf("Ended\n");

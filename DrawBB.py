@@ -12,7 +12,7 @@ fig,ax = plt.subplots(1)
 ax.imshow(im)
 
 # Copy Paste code here:
-rect = patches.Rectangle((52,25),52,70,linewidth=1,edgecolor='r',facecolor='none')
+rect = patches.Rectangle((53,25),51,71,linewidth=1,edgecolor='r',facecolor='none')
 ax.add_patch(rect)
 
 
