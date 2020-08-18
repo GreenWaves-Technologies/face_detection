@@ -27,9 +27,6 @@
 #define PRINTF printf
 #endif
 
-//#define PRINTF(...) ((void) 0)
-#define PRINTF printf
-
 //#define FROM_CAMERA
 //#define NO_BRIDGE
 
@@ -38,9 +35,6 @@ struct pi_device ili;
 struct pi_device device;
 static pi_buffer_t buffer;
 
-//TODO: how what are these parameters
-#define STACK_SIZE           2*1024 //This is for PE0   (Master)
-#define SLAVE_STACK_SIZE     1024 //This is for PE1-7 (Slaves)
 #define MOUNT           1
 #define UNMOUNT         0
 #define CID             0
@@ -538,8 +532,8 @@ int face_detection()
         memset(task, 0, sizeof(struct pi_cluster_task));
         task->entry = RunNN;
         task->arg = (void *) NULL;
-        task->stack_size = (uint32_t) STACK_SIZE;
-        task->slave_stack_size = (uint32_t) SLAVE_STACK_SIZE;
+        task->stack_size = (uint32_t) CLUSTER_STACK_SIZE;
+        task->slave_stack_size = (uint32_t) CLUSTER_SLAVE_STACK_SIZE;
     
 
         pi_cluster_send_task_to_cl(&cluster_dev, task);
@@ -574,8 +568,8 @@ int face_detection()
         memset(task, 0, sizeof(struct pi_cluster_task));
         task->entry = RunSSD;
         task->arg = (void *) NULL;
-        task->stack_size = (uint32_t) STACK_SIZE;
-        task->slave_stack_size = (uint32_t) SLAVE_STACK_SIZE;
+        task->stack_size = (uint32_t) CLUSTER_STACK_SIZE;
+        task->slave_stack_size = (uint32_t) CLUSTER_SLAVE_STACK_SIZE;
         pi_cluster_send_task_to_cl(&cluster_dev, task);
 
         pmsis_l1_malloc_free(SSDKernels_L1_Memory,_SSDKernels_L1_Memory_SIZE);

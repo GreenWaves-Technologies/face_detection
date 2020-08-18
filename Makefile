@@ -44,7 +44,30 @@ include model_decl.mk
 # Here we set the memory allocation for the generated kernels
 # REMEMBER THAT THE L1 MEMORY ALLOCATION MUST INCLUDE SPACE
 # FOR ALLOCATED STACKS!
-
+# FC stack size:
+MAIN_STACK_SIZE=2048
+# Cluster PE0 stack size:
+CLUSTER_STACK_SIZE=4096
+# Cluster PE1-PE7 stack size:
+CLUSTER_SLAVE_STACK_SIZE=1024
+TOTAL_STACK_SIZE=$(shell expr $(CLUSTER_STACK_SIZE) \+ $(CLUSTER_SLAVE_STACK_SIZE) \* 7)
+ifeq '$(TARGET_CHIP_FAMILY)' 'GAP9'
+  FREQ_CL?=50
+  FREQ_FC?=50
+  MODEL_L1_MEMORY=$(shell expr 125000 \- $(TOTAL_STACK_SIZE))
+  MODEL_L2_MEMORY=1300000
+  MODEL_L3_MEMORY=8388608
+else
+  ifeq '$(TARGET_CHIP)' 'GAP8_V3'
+    FREQ_CL?=175
+  else
+    FREQ_CL?=50
+  endif
+  FREQ_FC?=250
+  MODEL_L1_MEMORY=$(shell expr 60000 \- $(TOTAL_STACK_SIZE))
+  MODEL_L2_MEMORY=150000
+  MODEL_L3_MEMORY=8388608
+endif
 # hram - HyperBus RAM
 # qspiram - Quad SPI RAM
 MODEL_L3_EXEC=hram
@@ -57,6 +80,7 @@ APP_SRCS += main.c ImgIO.c ImageDraw.c SSDKernels.c SSDBasicKernels.c SSDParams.
 
 APP_CFLAGS += -w -O2 -s -mno-memcpy -fno-tree-loop-distribute-patterns
 APP_CFLAGS += -I. -I./helpers $(MODEL_LIB_INCLUDE_POW2) -I$(TILER_EMU_INC) -I$(TILER_INC) -I$(GEN_PATH) -I$(MODEL_BUILD)
+APP_CFLAGS += -DCLUSTER_STACK_SIZE=$(CLUSTER_STACK_SIZE) -DCLUSTER_SLAVE_STACK_SIZE=$(CLUSTER_SLAVE_STACK_SIZE)
 
 ifeq ($(SILENT),1)
   APP_CFLAGS += -DSILENT=1
