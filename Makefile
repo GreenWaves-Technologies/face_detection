@@ -111,8 +111,10 @@ GenSSDTile: SSDModel.c
 $(SSD_MODEL_GEN_C): GenSSDTile
 	./GenSSDTile
 
-SSD_model: $(SSD_MODEL_GEN_C)
+SSDParams.c: $(SSD_MODEL_GEN_C)
 	cd SSDParamsGenerator && $(MAKE) all run
+
+SSD_model: SSDParams.c
 
 #################
 
