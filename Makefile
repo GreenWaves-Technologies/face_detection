@@ -26,11 +26,13 @@ $(info Building GAP8 mode with $(QUANTIZATION_BITS) bit quantization)
 # the quantization. This is because in 8 bit mode we used signed
 # 8 bit so the input to the model needs to be shifted 1 bit
 ifeq ($(QUANTIZATION_BITS),8)
+  MODEL_SQ8=1
   GAP_FLAGS += -DQUANTIZATION_8BIT
   NNTOOL_SCRIPT=model/nntool_script8
   MODEL_SUFFIX = _8BIT
 else
   ifeq ($(QUANTIZATION_BITS),16)
+    MODEL_POW2=1
     GAP_FLAGS += -DQUANTIZATION_16BIT
     NNTOOL_SCRIPT=model/nntool_script16
     MODEL_SUFFIX = _16BIT
@@ -106,7 +108,7 @@ SSD_MODEL_GEN_C = $(addsuffix .c, $(SSD_MODEL_GEN))
 SSD_MODEL_GEN_CLEAN = $(SSD_MODEL_GEN_C) $(addsuffix .h, $(SSD_MODEL_GEN))
 
 GenSSDTile: SSDModel.c
-	gcc -g -o GenSSDTile -I$(TILER_EMU_INC) -I"$(TILER_INC)" SSDModel.c $(TILER_LIB)
+	gcc -g -o GenSSDTile -I$(TILER_EMU_INC) -I"$(TILER_INC)" SSDModel.c $(TILER_LIB) #-lSDL2 -lSDL2_ttf -DAT_DISPLAY
 
 $(SSD_MODEL_GEN_C): GenSSDTile
 	./GenSSDTile
