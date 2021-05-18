@@ -78,10 +78,10 @@ MODEL_L3_EXEC=hram
 MODEL_L3_CONST=hflash
 
 APP=face_detection
-APP_SRCS += main.c ImgIO.c ImageDraw.c SSDKernels.c SSDBasicKernels.c SSDParams.c $(MODEL_SRCS) $(MODEL_LIB_POW2)
+APP_SRCS += main.c ImgIO.c ImageDraw.c SSDKernels.c SSDBasicKernels.c SSDParams.c $(MODEL_SRCS) $(CNN_LIB)
 
 APP_CFLAGS += -w -O2 -s -mno-memcpy -fno-tree-loop-distribute-patterns
-APP_CFLAGS += -I. -I./helpers $(MODEL_LIB_INCLUDE_POW2) -I$(TILER_EMU_INC) -I$(TILER_INC) -I$(GEN_PATH) -I$(MODEL_BUILD)
+APP_CFLAGS += -I. -I./helpers $(CNN_LIB_INCLUDE) -I$(TILER_EMU_INC) -I$(TILER_INC) -I$(GEN_PATH) -I$(MODEL_BUILD)
 APP_CFLAGS += -DCLUSTER_STACK_SIZE=$(CLUSTER_STACK_SIZE) -DCLUSTER_SLAVE_STACK_SIZE=$(CLUSTER_SLAVE_STACK_SIZE)
 
 ifeq ($(SILENT),1)
@@ -123,6 +123,10 @@ SSD_model: SSDParams.c
 
 # all depends on the model
 all:: SSD_model model
+
+clean_at_model:
+	rm -rf BUILD
+	rm -rf GenTile
 
 clean:: #clean_model
 	rm -rf BUILD
