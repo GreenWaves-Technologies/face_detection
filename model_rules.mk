@@ -13,9 +13,6 @@ else
   MODEL_TRAIN_FLAGS =
 endif
 
-# $(MODEL_TRAIN_BUILD):
-# 	mkdir $(MODEL_TRAIN_BUILD)
-
 $(MODEL_BUILD):
 	mkdir $(MODEL_BUILD)	
 
@@ -34,8 +31,9 @@ $(MODEL_BUILD)/$(MODEL_SRC): $(MODEL_STATE) $(MODEL_TFLITE)
 	$(NNTOOL) -g -M $(MODEL_BUILD) -m $(MODEL_SRC) -T $(TENSORS_DIR) -H $(MODEL_HEADER) $(MODEL_GENFLAGS_EXTRA) $<
 
 # Build the code generator from the model code
-$(MODEL_GEN_EXE): $(MODEL_BUILD)/$(MODEL_SRC)
-	gcc -g -o $(MODEL_GEN_EXE) -I$(TILER_EMU_INC) -I$(TILER_INC) $(MODEL_GEN_INCLUDE_POW2) -I$(GEN_PATH) $(MODEL_BUILD)/$(MODEL_SRC) $(MODEL_GEN_POW2) $(TILER_LIB) 
+$(MODEL_GEN_EXE): $(CNN_GEN) $(MODEL_BUILD)/$(MODEL_SRC) $(EXTRA_GENERATOR_SRC) | $(MODEL_BUILD)
+	gcc -g -o $(MODEL_GEN_EXE) -I. -I$(TILER_EMU_INC) -I$(TILER_INC) $(CNN_GEN_INCLUDE) $(CNN_LIB_INCLUDE) $^ $(TILER_LIB) $(SDL_FLAGS)
+
 
 # Run the code generator to generate GAP graph and kernel code
 $(MODEL_GEN_C): $(MODEL_GEN_EXE)
