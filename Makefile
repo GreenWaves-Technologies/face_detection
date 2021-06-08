@@ -26,11 +26,13 @@ $(info Building GAP8 mode with $(QUANTIZATION_BITS) bit quantization)
 # the quantization. This is because in 8 bit mode we used signed
 # 8 bit so the input to the model needs to be shifted 1 bit
 ifeq ($(QUANTIZATION_BITS),8)
+  MODEL_SQ8=1
   GAP_FLAGS += -DQUANTIZATION_8BIT
   NNTOOL_SCRIPT=model/nntool_script8
   MODEL_SUFFIX = _8BIT
 else
   ifeq ($(QUANTIZATION_BITS),16)
+    MODEL_POW2=1
     GAP_FLAGS += -DQUANTIZATION_16BIT
     NNTOOL_SCRIPT=model/nntool_script16
     MODEL_SUFFIX = _16BIT
@@ -76,10 +78,10 @@ MODEL_L3_EXEC=hram
 MODEL_L3_CONST=hflash
 
 APP=face_detection
-APP_SRCS += main.c ImgIO.c ImageDraw.c SSDKernels.c SSDBasicKernels.c SSDParams.c $(MODEL_SRCS) $(MODEL_LIB_POW2)
+APP_SRCS += main.c ImgIO.c ImageDraw.c SSDKernels.c SSDBasicKernels.c SSDParams.c $(MODEL_SRCS) $(CNN_LIB)
 
 APP_CFLAGS += -w -O2 -s -mno-memcpy -fno-tree-loop-distribute-patterns
-APP_CFLAGS += -I. -I./helpers $(MODEL_LIB_INCLUDE_POW2) -I$(TILER_EMU_INC) -I$(TILER_INC) -I$(GEN_PATH) -I$(MODEL_BUILD)
+APP_CFLAGS += -I. -I./helpers $(CNN_LIB_INCLUDE) -I$(TILER_EMU_INC) -I$(TILER_INC) -I$(GEN_PATH) -I$(MODEL_BUILD)
 APP_CFLAGS += -DCLUSTER_STACK_SIZE=$(CLUSTER_STACK_SIZE) -DCLUSTER_SLAVE_STACK_SIZE=$(CLUSTER_SLAVE_STACK_SIZE)
 
 ifeq ($(SILENT),1)
@@ -106,7 +108,7 @@ SSD_MODEL_GEN_C = $(addsuffix .c, $(SSD_MODEL_GEN))
 SSD_MODEL_GEN_CLEAN = $(SSD_MODEL_GEN_C) $(addsuffix .h, $(SSD_MODEL_GEN))
 
 GenSSDTile: SSDModel.c
-	gcc -g -o GenSSDTile -I$(TILER_EMU_INC) -I"$(TILER_INC)" SSDModel.c $(TILER_LIB)
+	gcc -g -o GenSSDTile -I$(TILER_EMU_INC) -I"$(TILER_INC)" SSDModel.c $(TILER_LIB) #-lSDL2 -lSDL2_ttf -DAT_DISPLAY
 
 $(SSD_MODEL_GEN_C): GenSSDTile
 	./GenSSDTile
@@ -121,6 +123,10 @@ SSD_model: SSDParams.c
 
 # all depends on the model
 all:: SSD_model model
+
+clean_at_model:
+	rm -rf BUILD
+	rm -rf GenTile
 
 clean:: #clean_model
 	rm -rf BUILD
