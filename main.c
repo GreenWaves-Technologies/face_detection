@@ -68,14 +68,14 @@ PI_L2 short int *tmp_buffer_classes, *tmp_buffer_boxes;
 typedef short int MNIST_IMAGE_IN_T;
 
 
-#define INPUT_1_Q  S0_Op_input_1_Q
+#define INPUT_1_Q  face_detection_Input_1_Q
 
-#define OUTPUT_1_Q S73_Op_output_1_Q
-#define OUTPUT_4_Q S75_Op_output_4_Q
-#define OUTPUT_2_Q S82_Op_output_2_Q
-#define OUTPUT_5_Q S84_Op_output_5_Q
-#define OUTPUT_3_Q S91_Op_output_3_Q
-#define OUTPUT_6_Q S93_Op_output_6_Q
+#define OUTPUT_1_Q face_detection_Output_1_Q
+#define OUTPUT_4_Q face_detection_Output_2_Q
+#define OUTPUT_2_Q face_detection_Output_3_Q
+#define OUTPUT_5_Q face_detection_Output_4_Q
+#define OUTPUT_3_Q face_detection_Output_5_Q
+#define OUTPUT_6_Q face_detection_Output_6_Q
 
 L2_MEM MNIST_IMAGE_IN_T *ImageIn;
 
