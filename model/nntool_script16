@@ -4,8 +4,8 @@ set input_divisor 256
 set input_offset 0
 #nodeoption 1 FORCEDPCONV 0
 #This take too long for an example
-#aquant -f 16 quant_samples/*
-aquant -s POW2 -f 16 quant_samples/2*
+#aquant -f 16 quant_samples/* -H 120 -W 160
+aquant -s POW2 -f 16 quant_samples/2* -H 120 -W 160
 set default_output_exec_location "AT_MEM_L3_HRAM"
 set l3_ram_ext_managed true
 set l2_ram_ext_managed false
