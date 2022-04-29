@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Gap.h"
 #include "face_detectionKernels.h"
 #include "face_detectionInfo.h"
 #include "SSDKernels.h"
