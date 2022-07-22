@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Gap.h"
 #include "face_detectionKernels.h"
 #include "face_detectionInfo.h"
 #include "SSDKernels.h"
@@ -84,12 +83,12 @@ extern PI_L2 Alps * anchor_layer_2;
 extern PI_L2 Alps * anchor_layer_3;
 
 
-short int * Output_1; 
-short int * Output_2; 
-short int * Output_3; 
-short int * Output_4; 
-short int * Output_5; 
-short int * Output_6; 
+short int * Output_1;
+short int * Output_2;
+short int * Output_3;
+short int * Output_4;
+short int * Output_5;
+short int * Output_6;
 
 #ifdef __EMUL__
 PI_L2 bboxs_fp_t bbxs;
@@ -189,7 +188,7 @@ int rect_intersect_area( short a_x, short a_y, short a_w, short a_h,
     if(size_x <=0 || size_x <=0)
         return 0;
     else
-        return size_x*size_y; 
+        return size_x*size_y;
 
     #undef MAX
     #undef MIN
@@ -205,7 +204,7 @@ void non_max_suppress(bboxs_t * boundbxs){
         //check if rect has been removed (-1)
         if(boundbxs->bbs[idx].alive==0)
             continue;
- 
+
         for(idx_int=0;idx_int<boundbxs->num_bb;idx_int++){
 
             if(boundbxs->bbs[idx_int].alive==0 || idx_int==idx)
@@ -253,7 +252,7 @@ static void RunSSD()
 
     //Set Boundinx Boxes to 0
     bbxs.num_bb = 0;
-    
+
     //TODO Quantization is likely wrong need to check output
 
     SDD3Dto2DSoftmax_80_60_12(Output_1,tmp_buffer_classes,OUTPUT_1_Q,2);
@@ -263,7 +262,7 @@ static void RunSSD()
     SDD3Dto2DSoftmax_40_30_14(Output_2,tmp_buffer_classes,OUTPUT_2_Q,2);
     SDD3Dto2D_40_30_28(Output_5,tmp_buffer_boxes,0,0);
     Predecoder40_30(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_2, &bbxs,OUTPUT_5_Q);
-    
+
     SDD3Dto2DSoftmax_20_15_16(Output_3,tmp_buffer_classes,OUTPUT_3_Q,2);
     SDD3Dto2D_20_15_32(Output_6,tmp_buffer_boxes,0,0);
     Predecoder20_15(tmp_buffer_classes, tmp_buffer_boxes, anchor_layer_3, &bbxs,OUTPUT_6_Q);
@@ -283,14 +282,14 @@ static void RunSSD()
         }
     }while(changed);
 
-    convertCoordBboxes(&bbxs,160,120); 
+    convertCoordBboxes(&bbxs,160,120);
     non_max_suppress(&bbxs);
 
     ti_ssd = gap_cl_readhwtimer()-ti;
 
     printBboxes(&bbxs);
     printBboxes_forPython(&bbxs);
-    
+
     PRINTF("Cycles SSD: %10d\n",ti_ssd);
 
 }
@@ -363,7 +362,7 @@ int checkResults(bboxs_t *boundbxs){
 
 int face_detection()
 {
-    char *ImageName = "../../../test_samples/francesco.pgm";    
+    char *ImageName = "../../../test_samples/francesco.pgm";
 
     unsigned int Wi, Hi;
     //Input image size
@@ -454,11 +453,11 @@ int face_detection()
     pi_ram_alloc(&HyperRam, &Output_1, 60 * 80* 8 * sizeof(short int));
     pi_ram_alloc(&HyperRam, &Output_2, 30 * 40* 8 * sizeof(short int));
     pi_ram_alloc(&HyperRam, &Output_3, 15 * 20* 8 * sizeof(short int));
-    
+
     pi_ram_alloc(&HyperRam, &Output_4, 60 * 80* 16 * sizeof(short int));
     pi_ram_alloc(&HyperRam, &Output_5, 30 * 40* 16 * sizeof(short int));
     pi_ram_alloc(&HyperRam, &Output_6, 15 * 20* 16 * sizeof(short int));
-    
+
     pi_ram_alloc(&HyperRam, &tmp_buffer_classes, 60 * 80* 8   * sizeof(short int));
     pi_ram_alloc(&HyperRam, &tmp_buffer_boxes  , 60 * 80* 16   * sizeof(short int));
 
@@ -478,7 +477,9 @@ int face_detection()
     /* Configure And open cluster. */
     struct pi_device cluster_dev;
     struct pi_cluster_conf cl_conf;
+    pi_cluster_conf_init(&cl_conf);
     cl_conf.id = 0;
+    cl_conf.cc_stack_size = CLUSTER_STACK_SIZE;
     pi_open_from_conf(&cluster_dev, (void *) &cl_conf);
     if (pi_cluster_open(&cluster_dev))
     {
@@ -486,7 +487,7 @@ int face_detection()
         pmsis_exit(-5);
     }
 
-    //Pay attention to hyper-flash freq while setting frequency of FC 
+    //Pay attention to hyper-flash freq while setting frequency of FC
     //pi_freq_set(PI_FREQ_DOMAIN_FC,100000000);
     //pi_freq_set(PI_FREQ_DOMAIN_CL,175000000);
     #endif
@@ -496,7 +497,7 @@ int face_detection()
         printf("NN Init exited with an error\n");
         pmsis_exit(-4);
     }
-    
+
     printf("Running NN\n");
 
     struct pi_cluster_task *task = pmsis_l2_malloc(sizeof(struct pi_cluster_task));
@@ -504,7 +505,7 @@ int face_detection()
         printf("Alloc Error! \n");
         pmsis_exit(-3);
     }
-    
+
     int iter=1;
 
     while(iter){
@@ -530,13 +531,8 @@ int face_detection()
             pmsis_exit(-4);
         }
 
-        memset(task, 0, sizeof(struct pi_cluster_task));
-        task->entry = RunNN;
-        task->arg = (void *) NULL;
-        task->stack_size = (uint32_t) CLUSTER_STACK_SIZE;
-        task->slave_stack_size = (uint32_t) CLUSTER_SLAVE_STACK_SIZE;
-    
-
+        pi_cluster_task(task, (void (*)(void *))RunNN, NULL);
+        pi_cluster_task_stacks(task, NULL, CLUSTER_SLAVE_STACK_SIZE);
         pi_cluster_send_task_to_cl(&cluster_dev, task);
 
         #ifndef FROM_CAMERA
@@ -566,17 +562,14 @@ int face_detection()
         }
 
 
-        memset(task, 0, sizeof(struct pi_cluster_task));
-        task->entry = RunSSD;
-        task->arg = (void *) NULL;
-        task->stack_size = (uint32_t) CLUSTER_STACK_SIZE;
-        task->slave_stack_size = (uint32_t) CLUSTER_SLAVE_STACK_SIZE;
+        pi_cluster_task(task, (void (*)(void *))RunSSD, NULL);
+        pi_cluster_task_stacks(task, NULL, CLUSTER_SLAVE_STACK_SIZE);
         pi_cluster_send_task_to_cl(&cluster_dev, task);
 
         pmsis_l1_malloc_free(SSDKernels_L1_Memory,_SSDKernels_L1_Memory_SIZE);
         pmsis_l2_malloc_free(SSDKernels_L2_Memory,_SSDKernels_L2_Memory_SIZE);
 
-        
+
         for(int y=0;y<120;y++){
             for(int x=0;x<160;x++){
                 ImageInChar[y*160+x] = (unsigned char)(ImageIn[(y*160)+(x)] >> (INPUT_1_Q - 8));
@@ -604,7 +597,7 @@ int face_detection()
 #endif
 
     printf("Ended\n");
-    
+
     if(checkResults(&bbxs)==0){
         printf("Correct results!\n");
         pmsis_exit(0);
