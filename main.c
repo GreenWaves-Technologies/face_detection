@@ -553,7 +553,7 @@ int face_detection()
 
         //SSD Allocations
         SSDKernels_L1_Memory = pi_l1_malloc(&cluster_dev, _SSDKernels_L1_Memory_SIZE);
-        SSDKernels_L2_Memory = pi_l2_malloc(&cluster_dev, _SSDKernels_L2_Memory_SIZE);
+        SSDKernels_L2_Memory = pi_l2_malloc(_SSDKernels_L2_Memory_SIZE);
 
         if(face_detection_L1_Memory==NULL || face_detection_L2_Memory==NULL)
         {
