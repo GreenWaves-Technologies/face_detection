@@ -39,8 +39,8 @@ static pi_buffer_t buffer;
 #define UNMOUNT         0
 #define CID             0
 
-struct pi_device HyperRam;
-static struct pi_hyperram_conf conf;
+struct pi_device DefaultRam;
+static struct pi_default_ram_conf conf;
 
 AT_HYPERFLASH_FS_EXT_ADDR_TYPE face_detection_L3_Flash = 0;
 
@@ -442,24 +442,24 @@ int face_detection()
 
 
     /* Init & open ram. */
-    pi_hyperram_conf_init(&conf);
-    pi_open_from_conf(&HyperRam, &conf);
-    if (pi_ram_open(&HyperRam))
+    pi_default_ram_conf_init(&conf);
+    pi_open_from_conf(&DefaultRam, &conf);
+    if (pi_ram_open(&DefaultRam))
     {
         printf("Error ram open !\n");
         pmsis_exit(-5);
     }
 
-    pi_ram_alloc(&HyperRam, &Output_1, 60 * 80* 8 * sizeof(short int));
-    pi_ram_alloc(&HyperRam, &Output_2, 30 * 40* 8 * sizeof(short int));
-    pi_ram_alloc(&HyperRam, &Output_3, 15 * 20* 8 * sizeof(short int));
+    pi_ram_alloc(&DefaultRam, &Output_1, 60 * 80* 8 * sizeof(short int));
+    pi_ram_alloc(&DefaultRam, &Output_2, 30 * 40* 8 * sizeof(short int));
+    pi_ram_alloc(&DefaultRam, &Output_3, 15 * 20* 8 * sizeof(short int));
 
-    pi_ram_alloc(&HyperRam, &Output_4, 60 * 80* 16 * sizeof(short int));
-    pi_ram_alloc(&HyperRam, &Output_5, 30 * 40* 16 * sizeof(short int));
-    pi_ram_alloc(&HyperRam, &Output_6, 15 * 20* 16 * sizeof(short int));
+    pi_ram_alloc(&DefaultRam, &Output_4, 60 * 80* 16 * sizeof(short int));
+    pi_ram_alloc(&DefaultRam, &Output_5, 30 * 40* 16 * sizeof(short int));
+    pi_ram_alloc(&DefaultRam, &Output_6, 15 * 20* 16 * sizeof(short int));
 
-    pi_ram_alloc(&HyperRam, &tmp_buffer_classes, 60 * 80* 8   * sizeof(short int));
-    pi_ram_alloc(&HyperRam, &tmp_buffer_boxes  , 60 * 80* 16   * sizeof(short int));
+    pi_ram_alloc(&DefaultRam, &tmp_buffer_classes, 60 * 80* 8   * sizeof(short int));
+    pi_ram_alloc(&DefaultRam, &tmp_buffer_boxes  , 60 * 80* 16   * sizeof(short int));
 
     if(Output_1==NULL || Output_2==NULL || Output_3==NULL || Output_4==NULL || Output_5==NULL || Output_6==NULL )
     {
