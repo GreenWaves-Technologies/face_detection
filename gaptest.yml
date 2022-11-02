@@ -17,4 +17,3 @@ variants:
             - release
         duration: standard
         flags: ~
-        compile_only: true
