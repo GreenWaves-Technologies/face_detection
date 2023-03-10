@@ -14,7 +14,7 @@ set graph_const_exec_from_flash true
 set graph_produce_node_names true
 set graph_produce_operinfos true
 set graph_monitor_cycles true
-nodeoption DEPTHWISE_CONV_2D_0_0_fusion PARALLELFEATURES 0
-nodeoption DEPTHWISE_CONV_2D_0_2 PARALLELFEATURES 0
+nodeoption DW_CONV_2D_0_0_fusion PARALLELFEATURES 0
+nodeoption DW_CONV_2D_0_2 PARALLELFEATURES 0
 #set graph_dump_tensor 7
 save_state
