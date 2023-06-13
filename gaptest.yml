@@ -1,17 +1,17 @@
 name: face_detection
-boards: []
-platforms: 
-    - board
-    - gvsoc
-os: 
-    - freertos
-chips: 
-    - gap9
 variants:
-    std:
-        name: standard
-        tags:
-            - integration
-            - release
-        duration: standard
+    gvsoc:
+        chip: gap9
+        board: gap9evk
+        platform: gvsoc
+        os: freertos
+        builder: make
+        flags: ~
+
+    board:
+        chip: gap9
+        board: gap9evk
+        platform: board
+        os: freertos
+        builder: make
         flags: ~
