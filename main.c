@@ -110,6 +110,17 @@ static int initSSD(){
 
     bbxs.num_bb = 0;
 
+    bbxs.num_bb = 0;
+    for(int i=0; i<MAX_BB; i++){
+        bbxs.bbs[i].x = 0;
+        bbxs.bbs[i].y = 0;
+        bbxs.bbs[i].w = 0;
+        bbxs.bbs[i].h = 0;
+        bbxs.bbs[i].score = 0;
+        bbxs.bbs[i].class = 0;
+        bbxs.bbs[i].alive = 0;
+    }
+
     initAnchorLayer_1();
     initAnchorLayer_2();
     initAnchorLayer_3();
