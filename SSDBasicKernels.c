@@ -188,8 +188,12 @@ void KerEstimate_bbox(int index,int global_index,int confidence, short int *Boxe
     cy_offset = Boxes[index*Anchors->anchor_params+1];
     w_offset  = Boxes[index*Anchors->anchor_params+2];
     h_offset  = Boxes[index*Anchors->anchor_params+3];
-    //printf("%f\n",FIX2FP(w_offset,11));
-    //printf("%f\n",FIX2FP(h_offset,11));
+    
+    printf("cx_offset:%f\n",FIX2FP(cx_offset,11));
+    printf("cy_offset:%f\n",FIX2FP(cy_offset,11));
+
+    printf("w_offset:%f\n",FIX2FP(w_offset,11));
+    printf("h_offset:%f\n",FIX2FP(h_offset,11));
 
     // step 3: calculate default anchor parameters for this location
     cx = FP2FIX(((zero_width  + (float)j_loc * Anchors->step_width)/(float)Anchors->img_width)  , 20);
@@ -226,27 +230,27 @@ void KerEstimate_bbox(int index,int global_index,int confidence, short int *Boxe
         bbxs->bbs[bbxs->num_bb].x  = ((cx_offset * var_0_f) << shift) + cx;
         bbxs->bbs[bbxs->num_bb].y  = ((cy_offset * var_1_f) << shift) + cy;
     }    
-    //printf("%f\n",FIX2FP(var_2_f,11));
-    //printf("%f\n",FIX2FP(var_3_f,11));
+    printf("%f\n",FIX2FP(var_2_f,11));
+    printf("%f\n",FIX2FP(var_3_f,11));
     
-    //printf("%f\n",FIX2FP((w_offset * var_2_f),22));
-    //printf("%f\n",FIX2FP((h_offset * var_3_f),22));
+    printf("%f\n",FIX2FP((w_offset * var_2_f),22));
+    printf("%f\n",FIX2FP((h_offset * var_3_f),22));
     
     //unsigned int Exp = Exp_fp_17_15((In[i]-M) << (15 - Norm));
     unsigned int Exp;
     Exp = Exp_fp_17_15( (w_offset * var_2_f) >> (Boxes_Q-5));
     bbxs->bbs[bbxs->num_bb].w       = (Exp * w_fix); //Output Q26
-    //printf("exp: %f\n",FIX2FP(Exp,15));
-    //printf("w_fix: %f\n",FIX2FP(w_fix,15));
-    //printf("exp mult: %f\n",FIX2FP(Exp * w_fix,15));
-    //printf("exp mult: %f\n",FIX2FP(bbxs->bbs[bbxs->num_bb].w,26));
+    printf("exp: %f\n",FIX2FP(Exp,15));
+    printf("w_fix: %f\n",FIX2FP(w_fix,15));
+    printf("exp mult: %f\n",FIX2FP(Exp * w_fix,15));
+    printf("exp mult: %f\n",FIX2FP(bbxs->bbs[bbxs->num_bb].w,26));
 
     Exp = Exp_fp_17_15( (h_offset * var_3_f) >> (Boxes_Q-5));
     bbxs->bbs[bbxs->num_bb].h       = (Exp * h_fix); //Output Q26
     
-    //printf("exp: %f\n",FIX2FP(Exp,15));
-    //printf("h_fix: %f\n",FIX2FP(h_fix,15));
-    //printf("exp mult: %f\n",FIX2FP(bbxs->bbs[bbxs->num_bb].h,26));
+    printf("exp: %f\n",FIX2FP(Exp,15));
+    printf("h_fix: %f\n",FIX2FP(h_fix,15));
+    printf("exp mult: %f\n",FIX2FP(bbxs->bbs[bbxs->num_bb].h,26));
     
     bbxs->bbs[bbxs->num_bb].class   = class;
     bbxs->bbs[bbxs->num_bb++].score = confidence;

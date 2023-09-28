@@ -153,7 +153,7 @@ void printBboxes(bboxs_t *boundbxs){
     PRINTF("\n------------------------------------------------------\n");
 
     for (int counter=0;counter< boundbxs->num_bb;counter++){
-        if(boundbxs->bbs[counter].alive)
+    //    if(boundbxs->bbs[counter].alive)
             PRINTF("bbox [%02d] : %.5f     %03d    %03d     %03d    %03d     %02d\n",
                 counter,
                 FIX2FP(boundbxs->bbs[counter].score,15 ),
@@ -162,7 +162,7 @@ void printBboxes(bboxs_t *boundbxs){
                 boundbxs->bbs[counter].w,
                 boundbxs->bbs[counter].h,
                 boundbxs->bbs[counter].class);
-    }//
+    }
 }
 
 
