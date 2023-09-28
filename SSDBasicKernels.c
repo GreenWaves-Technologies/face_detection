@@ -269,7 +269,7 @@ void KerPredecoderShort(KerPredecoderShort_ArgT *Arg){
     int Boxes_Q  = Arg->Boxes_Q;
     
     Alps * anch             = (Alps*) Arg->Ancor_layer;
-    bboxs_fp_t* bbxs        = (bboxs_fp_t*) Arg->BoundingBoxes;
+    bboxs_t* bbxs        = (bboxs_t*) Arg->BoundingBoxes;
     
     unsigned int CoreId = gap_coreid();
 
