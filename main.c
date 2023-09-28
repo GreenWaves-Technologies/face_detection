@@ -135,10 +135,10 @@ void convertCoordBboxes(bboxs_t *boundbxs,float scale_x,float scale_y){
     for (int counter=0;counter< boundbxs->num_bb;counter++){
         //Set Alive for non max this should be done somewhere else
         boundbxs->bbs[counter].alive=1;
-        boundbxs->bbs[counter].x = (int)(FIX2FP(boundbxs->bbs[counter].x,20) * scale_x);
-        boundbxs->bbs[counter].y = (int)(FIX2FP(boundbxs->bbs[counter].y,20) * scale_y);
-        boundbxs->bbs[counter].w = (int)(FIX2FP(boundbxs->bbs[counter].w,26) * scale_x);
-        boundbxs->bbs[counter].h = (int)(FIX2FP(boundbxs->bbs[counter].h,26) * scale_y);
+        boundbxs->bbs[counter].x = (uint32_t)(FIX2FP(boundbxs->bbs[counter].x,20) * scale_x);
+        boundbxs->bbs[counter].y = (uint32_t)(FIX2FP(boundbxs->bbs[counter].y,20) * scale_y);
+        boundbxs->bbs[counter].w = (uint32_t)(FIX2FP(boundbxs->bbs[counter].w,26) * scale_x);
+        boundbxs->bbs[counter].h = (uint32_t)(FIX2FP(boundbxs->bbs[counter].h,26) * scale_y);
         boundbxs->bbs[counter].x = boundbxs->bbs[counter].x - (boundbxs->bbs[counter].w/2);
         boundbxs->bbs[counter].y = boundbxs->bbs[counter].y - (boundbxs->bbs[counter].h/2);
     }
